@@ -1,25 +1,33 @@
 from ai_agent_jobsearch_project.data.load_yrkesbarometern import load_yrkesbarometern
 from ai_agent_jobsearch_project.embeddings.document_builder import build_document
 from ai_agent_jobsearch_project.embeddings.sentence_transformer import encode_texts
-
-
+from ai_agent_jobsearch_project.embeddings.vector_store import connect_db, create_or_overwrite_table
 
 
 def main():
-    df = load_yrkesbarometern()  # använder default DATA_PATH
+    df = load_yrkesbarometern()
 
-    docs = [
-        build_document(df.iloc[0].to_dict()),
-        build_document(df.iloc[1].to_dict())
-    ]
+    df_small = df[df["lan"] == "00"].head(10).copy()        #En liten df för att testa funktionalitet
 
-    embeddings = encode_texts(docs)
+    docs = [build_document(row.to_dict()) for _, row in df_small.iterrows()]
+    vectors = encode_texts(docs)
 
-    print("Embeddings shape:", embeddings.shape)
-    print("First vector length:", len(embeddings[0]))
+    records = []
+    for i, (_, row) in enumerate(df_small.iterrows()):
+        records.append({
+            "yb_concept_id": row["yb_concept_id"],
+            "yb_yrke": row["yb_yrke"],
+            "lan": row["lan"],
+            "document": docs[i],
+            "vector": vectors[i].tolist(),
+        })
 
+    db = connect_db()
+    table = create_or_overwrite_table(db, "yrken", records)
 
+    print("Rows in table:", table.count_rows())
 
 
 if __name__ == "__main__":
     main()
+

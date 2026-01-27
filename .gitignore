@@ -123,3 +123,4 @@ vector_database/
 rag_playground/db/
 **/lancedb*/
 **/*.lance
+rag_playground/
