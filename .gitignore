@@ -117,3 +117,9 @@ Thumbs.db
 #Virtual environments
 .env
 .venv
+
+# Vector databases (LanceDB)
+vector_database/
+rag_playground/db/
+**/lancedb*/
+**/*.lance
