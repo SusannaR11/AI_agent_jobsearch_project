@@ -7,7 +7,12 @@ authors = [
     { name = "suseliwen", email = "susanne.wenblad@gmail.com" }
 ]
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "duckdb>=1.4.4",
+    "ipykernel>=7.1.0",
+    "matplotlib>=3.10.8",
+    "pandas>=3.0.0",
+]
 
 [project.scripts]
 ai-agent-jobsearch-project = "ai_agent_jobsearch_project:main"
