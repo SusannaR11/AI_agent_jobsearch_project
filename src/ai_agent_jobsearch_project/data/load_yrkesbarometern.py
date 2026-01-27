@@ -14,7 +14,7 @@ def load_yrkesbarometern(path: Path | None = None) -> pd.DataFrame:
     """ 
     
     if path is None:
-        path = DATA_PATH
+        path = DATA_PATH 
 
     with path.open("r", encoding= "utf-8") as file:
         data = json.load(file)
