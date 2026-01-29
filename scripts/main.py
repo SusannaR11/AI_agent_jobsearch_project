@@ -1,7 +1,7 @@
 from ai_agent_jobsearch_project.data.load_yrkesbarometern import load_yrkesbarometern
 from ai_agent_jobsearch_project.embeddings.document_builder import build_document
 from ai_agent_jobsearch_project.embeddings.sentence_transformer import encode_texts
-from ai_agent_jobsearch_project.embeddings.vector_store import connect_db, create_or_overwrite_table
+from ai_agent_jobsearch_project.embeddings.vector_store import connect_db, create_or_overwrite_table, search_by_vector
 
 
 def main():
@@ -26,6 +26,14 @@ def main():
     table = create_or_overwrite_table(db, "yrken", records)
 
     print("Rows in table:", table.count_rows())
+
+
+
+    query = "yrken inom administration med goda framtidsutsikter"
+    query_vector = encode_texts([query])[0].tolist()
+
+    results = search_by_vector(table, query_vector, k=5)
+    print(results[["yb_yrke", "lan", "_distance"]])
 
 
 if __name__ == "__main__":

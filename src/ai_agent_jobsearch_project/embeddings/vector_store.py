@@ -23,3 +23,12 @@ def create_or_overwrite_table(db, table_name: str, records: list[dict]):
     Create (or overwrite) a table from a list of dict-records.
     """
     return db.create_table(table_name, data=records, mode="overwrite")
+
+
+def search_by_vector(table, query_vector: list[float], k: int = 5):
+    """
+    ANN vector search in LanceDB database. 
+    Returns a pandas dataframe with top 5 k-matches
+    """
+
+    return(table.search(query_vector).limit(k).to_pandas())
