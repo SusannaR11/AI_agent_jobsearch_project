@@ -5,9 +5,21 @@ from ai_agent_jobsearch_project.embeddings.vector_store import connect_db, creat
 
 
 def main():
+
+    SELECTED_AREAS = [
+        "Data/IT",
+        "Administration, ekonomi, juridik",
+        "Hälso- och sjukvård",
+    ]
+
     df = load_yrkesbarometern()
 
-    df_small = df[df["lan"] == "00"].head(10).copy()        #En liten df för att testa funktionalitet
+    #df_small = df[df["yrkesomrade"].str.contains("Data/IT", na =False)].copy() #En liten df för att testa funktionalitet
+    #print("Rows selected", len(df_small))  
+
+    df_filtered = df[df["yrkesomrade"].isin(SELECTED_AREAS)].copy() 
+
+    df_small = df_filtered.head(800).copy()  
 
     docs = [build_document(row.to_dict()) for _, row in df_small.iterrows()]
     vectors = encode_texts(docs)
@@ -29,11 +41,24 @@ def main():
 
 
 
-    query = "yrken inom administration med goda framtidsutsikter"
-    query_vector = encode_texts([query])[0].tolist()
+    #query = "yrken inom Data/IT med goda framtidsutsikter"
+    #query_vector = encode_texts([query])[0].tolist()
 
-    results = search_by_vector(table, query_vector, k=5)
-    print(results[["yb_yrke", "lan", "_distance"]])
+    #results = search_by_vector(table, query_vector, k=10)
+    #print(results[["yb_yrke", "lan", "_distance"]])
+
+
+    queries = [
+        "Yrken inom Data/IT med goda framtidsutsikter", 
+        "Yrken inom sjukvård med goda framtidsutsikter"
+    ]
+
+    for q in queries:
+        q_vector = encode_texts([q])[0].tolist()
+        results = search_by_vector(table, q_vector, k = 5)
+
+        print("\nQUERY:", q)
+        print(results[["yb_yrke", "lan", "_distance"]])
 
 
 if __name__ == "__main__":
