@@ -25,6 +25,15 @@ def create_or_overwrite_table(db, table_name: str, records: list[dict]):
     return db.create_table(table_name, data=records, mode="overwrite")
 
 
+def add_records(table, records: list[dict]):
+    """
+    Add records to an existing table
+    """
+    table.add(records)
+
+    return table
+
+
 def search_by_vector(table, query_vector: list[float], k: int = 5):
     """
     ANN vector search in LanceDB database. 

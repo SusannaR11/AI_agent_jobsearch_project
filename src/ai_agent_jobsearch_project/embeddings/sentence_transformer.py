@@ -17,9 +17,3 @@ def encode_texts(texts: list[str]) -> np.ndarray:
     embeddings = _model.encode(texts)
     return embeddings
 
-def create_or_overwrite_table(db, table_name: str, records: list[dict]):
-    """
-    Create or overwrite a list om dictionary records
-    """
-
-    return db.create_table(table_name, data = "records", mode= "overwrite")
