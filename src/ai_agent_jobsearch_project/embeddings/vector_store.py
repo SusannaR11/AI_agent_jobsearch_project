@@ -1,5 +1,6 @@
 import lancedb
 from pathlib import Path
+from ai_agent_jobsearch_project.embeddings.lance_models import OccupationRecord
 
 
 
@@ -22,7 +23,7 @@ def create_or_overwrite_table(db, table_name: str, records: list[dict]):
     """
     Create (or overwrite) a table from a list of dict-records.
     """
-    return db.create_table(table_name, data=records, mode="overwrite")
+    return db.create_table(table_name, data=records, mode="overwrite", schema = OccupationRecord)
 
 
 def add_records(table, records: list[dict]):
