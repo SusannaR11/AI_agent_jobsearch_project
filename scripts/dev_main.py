@@ -15,10 +15,8 @@ def main():
     TABLE_NAME = "yrken"
     LIMIT = 800
     BATCH_SIZE = 100  
-
-    
+   
     rows = load_rows(SELECTED_AREAS, limit = LIMIT)
-
 
     db = connect_db()
     table, inserted_total = create_and_append_records(
