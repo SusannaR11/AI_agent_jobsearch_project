@@ -42,7 +42,7 @@ def main():
 
         docs = [build_document(r) for r in batch_rows]
         vectors = encode_texts(docs)
-
+        
         records = []
 
         for row, doc, vec in zip(batch_rows, docs, vectors ):
@@ -50,7 +50,7 @@ def main():
                 "yb_concept_id": row["yb_concept_id"],
                 "yrkesomrade": row["yrkesomrade"],
                 "yb_yrke": row["yb_yrke"],
-                "lan": row["lan"],
+                "lan": str(row["lan"]),
                 "prognos": safe_str(row.get("prognos")),
                 "jobbmojligheter": safe_str(row.get("jobbmojligheter")),
                 "rekryteringssituation": safe_str(row.get("rekryteringssituation")),
