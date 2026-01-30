@@ -10,10 +10,14 @@ def main():
         "Data/IT",
         "Administration, ekonomi, juridik",
         "Hälso- och sjukvård",
+        "Bygg och anläggning",
+        "Industriell tillverkning",
+        "Transport",
+        "Försäljning, inköp, marknadsföring",
     ]  
 
     TABLE_NAME = "yrken"
-    LIMIT = 800
+    LIMIT = 1600
     BATCH_SIZE = 100  
    
     rows = load_rows(SELECTED_AREAS, limit = LIMIT)
@@ -33,12 +37,17 @@ def main():
         ("goda framtidsutsikter", "Data/IT"),
         ("goda framtidsutsikter", "Hälso- och sjukvård"),
         ("goda framtidsutsikter", "Administration, ekonomi, juridik"),
+        ("goda framtidsutsikter", "Bygg och anläggning"),
+        ("goda framtidsutsikter", "Industriell tillverkning"),
+        ("goda framtidsutsikter", "Transport"),
+        ("goda framtidsutsikter","Försäljning, inköp, marknadsföring"),
+
     ]
 
     for q, area in query_config:
         q_vector = encode_texts([q])[0].tolist()
         results = search_by_vector(table, q_vector, k = 200)
-        results = results[results["yrkesomrade"] == area].head(5)
+        results = results[results["yrkesomrade"] == area].head(20)
         
         print("\nYrkesområde:", area, "| QUERY:", q)
         print(results[
