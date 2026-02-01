@@ -1,10 +1,10 @@
 import lancedb
 from pathlib import Path
 from ai_agent_jobsearch_project.embeddings.lance_models import OccupationRecord
+from ai_agent_jobsearch_project.backend.settings import lancedb_dir
 
 
-
-DB_PATH = Path(__file__).resolve().parents[3]/ "rag_playground" / "db" / "yrkesbarometer_vectors"
+DB_PATH = lancedb_dir()
 
 
 

@@ -6,6 +6,8 @@ from ai_agent_jobsearch_project.embeddings.vector_store import connect_db, searc
 from ai_agent_jobsearch_project.embeddings.sentence_transformer import encode_texts
 from ai_agent_jobsearch_project.backend.schemas import ForecastResult
 
+from dotenv import load_dotenv
+load_dotenv()
 
 app = FastAPI(title = "Yrkesbarometern API")
 
@@ -13,12 +15,9 @@ app = FastAPI(title = "Yrkesbarometern API")
 def root():
     return RedirectResponse(url="/docs")
 
-
 @app.get("/health")
 def health_check():
-    return {"status:", "OK"}
-
-
+    return {"status": "OK"}
 
 @app.get("/areas")
 def list_areas():
@@ -32,15 +31,14 @@ def list_areas():
     df = table.to_pandas()
     areas = sorted(df["yrkesomrade"].dropna().unique().tolist())
 
-    return {"areas": areas}
-    
+    return {"areas": areas}   
 
 
 
 @app.get("/forecast", response_model=List[ForecastResult])
 def forecast(
     yrkesomrade: str = Query(...),
-    query: str = Query(...),
+    query_yrke: str = Query(...),
     limit: int = Query(5, ge=1, le=20),
     ):
     db = connect_db()
@@ -51,7 +49,7 @@ def forecast(
         raise HTTPException(status_code=500, detail="Table 'yrken' not found. Run ingestion first.")
     
 
-    q_vector = encode_texts([query])[0].tolist()
+    q_vector = encode_texts([query_yrke])[0].tolist()
     results = search_by_vector(table, q_vector, k=200)
 
     filtered = results[results["yrkesomrade"] == yrkesomrade].head(limit)
