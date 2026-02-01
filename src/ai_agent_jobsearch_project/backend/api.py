@@ -2,9 +2,11 @@ from fastapi import FastAPI, Query, HTTPException
 from fastapi.responses import RedirectResponse
 from typing import List
 
-from ai_agent_jobsearch_project.embeddings.vector_store import connect_db, search_by_vector
+from ai_agent_jobsearch_project.embeddings.vector_store import get_table, search_by_vector
 from ai_agent_jobsearch_project.embeddings.sentence_transformer import encode_texts
 from ai_agent_jobsearch_project.backend.schemas import ForecastResult
+from ai_agent_jobsearch_project.services.ranking import apply_ranking
+
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -15,16 +17,27 @@ app = FastAPI(title = "Yrkesbarometern API")
 def root():
     return RedirectResponse(url="/docs")
 
-@app.get("/health")
+@app.get("/health")             #Visar att appen körs och kan ta emot requests
 def health_check():
     return {"status": "OK"}
 
+@app.get("/ready")              #Tips från ChatGPT inför Docker & Azure - visar att databas finns och att tabellen 'yrken' går att öppna. 
+def ready_check():
+    try:
+        _ =get_table("yrken")
+        return {"status": "READY"}
+    except Exception:
+        raise HTTPException(
+            status_code= 503,
+            detail = "Not ready: table 'yrken' not found. Run ingestion"
+        )
+    
+
 @app.get("/areas")
-def list_areas():
-    db = connect_db()
+def list_areas():   
 
     try:
-        table = db.open_table("yrken")
+        table = get_table("yrken")      
     except Exception:
         raise HTTPException(status_code=500, detail="Table 'yrken' not found. Run ingestion first.")
 
@@ -33,18 +46,15 @@ def list_areas():
 
     return {"areas": areas}   
 
-
-
 @app.get("/forecast", response_model=List[ForecastResult])
 def forecast(
     yrkesomrade: str = Query(...),
     query_yrke: str = Query(...),
     limit: int = Query(5, ge=1, le=20),
     ):
-    db = connect_db()
-
+    
     try:
-        table = db.open_table("yrken")
+        table = get_table("yrken")
     except Exception:
         raise HTTPException(status_code=500, detail="Table 'yrken' not found. Run ingestion first.")
     
@@ -56,6 +66,13 @@ def forecast(
 
     if filtered.empty:
         return []
+    
+    filtered = apply_ranking(filtered)
+
+    filtered = filtered.sort_values(
+        by=["rank_score", "_distance"],
+        ascending=[False, True]
+    ).head(limit)
 
     payload = []
     for _, row in filtered.iterrows():
