@@ -7,4 +7,6 @@ class ForecastResult(BaseModel):
     prognos: str
     jobbmojligheter: str
     rekryteringssituation: str
+    text_jobbmojligheter: str
+    text_rekryteringssituation: str
     distance: float

@@ -10,5 +10,8 @@ class OccupationRecord(LanceModel):
     jobbmojligheter: str = ""
     rekryteringssituation: str = ""
 
+    text_jobbmojligheter: str = ""
+    text_rekryteringssituation: str = ""
+
     document: str
     vector: Vector(384)
