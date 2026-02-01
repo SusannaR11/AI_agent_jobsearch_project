@@ -57,6 +57,8 @@ def main():
                 "prognos",
                 "jobbmojligheter",
                 "rekryteringssituation",
+                "text_jobbmojligheter",
+                "text_rekryteringssituation",
                 "_distance"            ]
         ]) 
 

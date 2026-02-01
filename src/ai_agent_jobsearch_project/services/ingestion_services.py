@@ -55,6 +55,8 @@ def build_records(batch_rows: list[dict]) -> list[dict]:
             "prognos": safe_str(row.get("prognos")),
             "jobbmojligheter": safe_str(row.get("jobbmojligheter")),
             "rekryteringssituation": safe_str(row.get("rekryteringssituation")),
+            "text_jobbmojligheter": safe_str(row.get("text_jobbmojligheter")),
+            "text_rekryteringssituation": safe_str(row.get("text_rekryteringssituation")),
             "document": doc,
             "vector": vec.tolist()
         })
