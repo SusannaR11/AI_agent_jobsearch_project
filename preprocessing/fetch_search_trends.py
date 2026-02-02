@@ -3,12 +3,12 @@ import re
 import zipfile
 import io
 import requests
+from backend.constants import DATA_DIR
 
 # pick up search trend json files from url
 BASE_URL = "https://data.arbetsformedlingen.se/annonser/search-trends/"
 INDEX_URL = BASE_URL + "index.html?C=M&O=A"
 
-DATA_DIR = Path("data")
 DATA_DIR.mkdir(exist_ok=True)
 
 # only keep 7 days on file in 'data' folder
@@ -28,7 +28,7 @@ def latest_zip_file():
     return BASE_URL + zip_name
 
 
-#
+# download zip, open it, and save json to directory
 def download_save_json(zip_url: str) -> Path:
     r = requests.get(zip_url, timeout=60)
     r.raise_for_status()
