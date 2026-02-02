@@ -1,13 +1,20 @@
 import streamlit as st
 import requests
 from ai_agent_jobsearch_project.frontend.api_client import get_areas, get_forecast
- 
+from ai_agent_jobsearch_project.frontend.constants import LAN_OPTIONS
+
 
 if "areas" not in st.session_state:
     st.session_state.areas = None
 
 if "selected_area" not in st.session_state:
     st.session_state.selected_area = None
+
+if "limit" not in st.session_state:
+    st.session_state.limit = 5
+
+if "lan" not in st.session_state:
+    st.session_state.lan = None
 
 
 #=========== Konfiguration av sidan ==============
@@ -49,6 +56,37 @@ with st.sidebar:
     if st.session_state.areas:
         st.session_state.selected_area = st.selectbox("Yrkesområde", st.session_state.areas)
 
+    
+    st.divider()
+    st.subheader(f"**Filtera din sökning**")
+
+    st.session_state.limit = st.slider(
+        "Antal träffar",
+        min_value=1,
+        max_value=15,
+        value=st.session_state.limit
+    )
+    st.divider()
+    st.subheader("Län (valfritt)")
+
+    lan_labels = [                              ###OBS! Detta är inte egen kod, utan kod genererad från ChatGPT pga ville få till en lösning med namn på län ist för länskoder
+        f"{code} - {name}" if code else name
+        for code, name in LAN_OPTIONS
+    ]
+    lan_codes = [code for code, _ in LAN_OPTIONS]
+
+    current_code = st.session_state.lan or ""
+    current_index = lan_codes.index(current_code) if current_code in lan_codes else 0
+
+    chosen = st.selectbox("Välj län", lan_labels, index=current_index)
+
+    # Hitta tillbaka till kod via index
+    chosen_index = lan_labels.index(chosen)
+    chosen_code = lan_codes[chosen_index]
+
+    st.session_state.lan = chosen_code if chosen_code else None
+
+
 
 
 
@@ -75,8 +113,8 @@ if st.button("Visa prognos"):
         results = get_forecast(
             yrkesomrade=st.session_state.selected_area,
             query_yrke=query_yrke,
-            lan= None,
-            limit=5
+            lan= st.session_state.lan,
+            limit=st.session_state.limit
         )
     except Exception as e:
         st.error(f"Kunde inte hämta prognos: {e}")
@@ -87,6 +125,12 @@ if st.button("Visa prognos"):
         st.stop()
     
     st.success(f"Hittade {len(results)} träffar")
+
+    if st.session_state.lan:
+        st.info(f"Visar prognos för län: {st.session_state.lan}")
+    else:
+        st.info("Visar nationell prognos för yrket.")
+
     for r in results:
         st.markdown(f"### {r['yb_yrke']} ({r['lan']})")
         st.write(f"**Prognos:** {r.get('prognos', '')}")
