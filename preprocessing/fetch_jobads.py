@@ -1,8 +1,13 @@
 import requests
 from backend.constants import JOBADS_URL
 
-def fetch_jobads(limit=200, q =""):
-    r= requests.get(JOBADS_URL, params={"q":q, "limit":limit}, timeout=30)
+def fetch_jobads(limit=200, q =None):
+    params={"limit":limit}
+
+    if q:
+        params["q"] = q
+
+    r= requests.get(JOBADS_URL, params=params, timeout=30)    
     r.raise_for_status()
     return r.json()["hits"]
 
