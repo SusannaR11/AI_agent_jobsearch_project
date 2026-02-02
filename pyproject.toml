@@ -12,6 +12,7 @@ dependencies = [
     "ipykernel>=7.1.0",
     "matplotlib>=3.10.8",
     "pandas>=3.0.0",
+    "requests>=2.32.5",
 ]
 
 [project.scripts]
