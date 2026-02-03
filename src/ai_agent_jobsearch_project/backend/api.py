@@ -44,7 +44,34 @@ def list_areas():
     df = table.to_pandas()
     areas = sorted(df["yrkesomrade"].dropna().unique().tolist())
 
-    return {"areas": areas}   
+    return {"areas": areas}  
+
+@app.get("/occupations") 
+def list_occupations(
+    yrkesomrade: str = Query(...),
+    lan: str |None = Query(None),
+):
+    try:
+        table = get_table("yrken")
+    except Exception:
+        raise HTTPException(status_code=500, detail="Table 'yrken' not found. Run ingestion first.")
+    
+    df = table.to_pandas()
+    filtered = df[df["yrkesomrade"]== yrkesomrade].copy()
+
+    if lan:
+        filtered = filtered[filtered["lan"] == lan].copy
+
+    occupations = (
+        filtered["yb_yrke"]
+        .dropna()
+        .astype(str)
+        .unique()
+        .tolist()
+    )
+    occupations = sorted(occupations)
+    
+    return {"occupations": occupations}
 
 @app.get("/forecast", response_model=List[ForecastResult])
 def forecast(
@@ -68,10 +95,15 @@ def forecast(
     if lan:
         filtered = filtered[filtered["lan"] == lan].copy()      
 
+    exact = filtered[filtered["yb_yrke"] == query_yrke].copy()      #Filtrering för exaktsökning!
+    if not exact.empty:
+        filtered = exact
 
     if filtered.empty:
         return []  
     
+   
+        
     
     filtered = apply_ranking(filtered)
 
