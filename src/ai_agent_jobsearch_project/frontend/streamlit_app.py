@@ -1,7 +1,11 @@
 import streamlit as st
 import requests
-from ai_agent_jobsearch_project.frontend.api_client import get_areas, get_forecast
+from ai_agent_jobsearch_project.frontend.api_client import get_areas, get_forecast, get_occupations
 from ai_agent_jobsearch_project.frontend.constants import LAN_OPTIONS
+
+
+LAN_CODE_TO_NAME = dict(LAN_OPTIONS)    # Omvandlar länskod + län till en dict; "" -> "Nationellt ...", "03" -> "Uppsala län", osv
+
 
 
 if "areas" not in st.session_state:
@@ -15,6 +19,9 @@ if "limit" not in st.session_state:
 
 if "lan" not in st.session_state:
     st.session_state.lan = None
+
+if "occupations" not in st.session_state:
+    st.session_state.occupations = None
 
 
 #=========== Konfiguration av sidan ==============
@@ -55,6 +62,18 @@ with st.sidebar:
         
     if st.session_state.areas:
         st.session_state.selected_area = st.selectbox("Yrkesområde", st.session_state.areas)
+    
+    st.divider()
+    st.subheader("Yrke")
+
+    if st.button("Ladda yrken"):
+        try:
+            st.session_state.occupations = get_occupations(
+                yrkesomrade=st.session_state.selected_area,
+                lan=st.session_state.lan
+            )
+        except Exception as e:
+            st.error(f"Kunde inte hämta yrken: {e}")
 
     
     st.divider()
@@ -98,7 +117,11 @@ st.text("Här söker du prognos för ett valt yrke. Du får information om framt
 st.text("Resultatet visar nationella prognos. Du kan även välja att se prognos för ett specifikt yrke inom ett län.")
 
 
-query_yrke = st.text_input("Skriv ett yrke", placeholder="t.ex. systemutvecklare inom IT")
+if st.session_state.occupations:
+    query_yrke = st.selectbox("Välj yrke", st.session_state.occupations)
+else:
+    st.info("Ladda yrken i sidomenyn för att välja yrke.")
+    query_yrke = ""
 
 if st.button("Visa prognos"):
     if not st.session_state.selected_area:
@@ -132,7 +155,10 @@ if st.button("Visa prognos"):
         st.info("Visar nationell prognos för yrket.")
 
     for r in results:
-        st.markdown(f"### {r['yb_yrke']} ({r['lan']})")
+        lan_code = r.get("lan", "")
+        lan_name = LAN_CODE_TO_NAME.get(lan_code, "Nationellt (ingen filtrering på län)")
+
+        st.markdown(f"### {r['yb_yrke']} - {lan_name}")
         st.write(f"**Prognos:** {r.get('prognos', '')}")
         st.write(f"**Jobbmöjligheter:** {r.get('jobbmojligheter', '')}")
         st.write(f"**Rekrytering:** {r.get('rekryteringssituation', '')}")
