@@ -33,10 +33,11 @@ with col1:
 
 #-----right column -------
 with col2:
-    st.subheader("Top advertised occupation groups")
+    st.subheader("Top advertised jobs")
     data = requests.get(f"{API}/top-job-listings", params={"days": days}).json()
+
     df_jobs = pd.DataFrame(data)
-    
+
     # validation if empty
     if df_jobs.empty:
         st.info("No job ads data returned from API.")
@@ -47,6 +48,7 @@ with col2:
         plt.title(f"Top job ads (last {days} days)")
         plt.tight_layout()
         st.pyplot(fig)
+
 
 # to run streamlit frontend:
 # uv run streamlit run frontend/app.py

@@ -1,4 +1,4 @@
-# 
+# defines end points for api
 
 import pandas as pd
 from backend.data_loader_search_trends import load_last_n
@@ -21,23 +21,19 @@ def get_top_job_listings(top_n: int = 10):
 def get_top_searches(days: int=7, top_n: int = 10):
     blobs = load_last_n(days)
 
-    labels = []
+    results = []
     for _, blob in blobs:
-        items= blob.get("items", blob)
-        print("TYPE blob:", type(blob))
-        print("TYPE items:", type(items))
-        print("FIRST items:", items[:3] if isinstance(items, list) else str(items)[:200])
+        data= blob.get("occupation-group-label")
 
-        for it in items:
-            label = it.get("label") or it.get("occupation_group") or it.get("occupation_group.label")
-            if label:
-                labels.append(label)
+        if not data:
+            continue
 
-    if not labels:
-        return[]
+        for label, count in data[:top_n]:
+            results.append({"label": label, "count": int(count)})
 
-    top = pd.Series(labels).value_counts().head(top_n)
-    return [{"label": k, "count": int(v)} for k, v in top.items()]
+        break
+
+    return results
 
 
  
