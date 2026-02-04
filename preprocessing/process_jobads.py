@@ -45,7 +45,9 @@ if __name__ == "__main__":
     jobs_to_duckdb("data/jobads.duckdb", job_count)
 
     print("Saved to DuckDB") # verify
-    print("Top 5:", job_count[:5])
+    print("Top 5:", job_count[:10])
 
 # to run script in command line:
 # uv run python -m preprocessing.process_jobads
+
+
