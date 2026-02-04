@@ -46,3 +46,6 @@ def load_last_n(n=7):
         result.append((p, load_json(p)))
     return result
 
+# to run script and load latest json file. run it as package:
+# uv run python -m backend.data_loader_search_trends
+

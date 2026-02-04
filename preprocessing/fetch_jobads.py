@@ -16,3 +16,6 @@ if __name__ == "__main__":
     print("Found ads: ", len(hits))
     print("Example occupation group: ") # to verify
     print(hits[0] ["occupation_group"] ["label"])
+
+# to run, run as package
+# uv run python preprocessing/fetch_jobads.py

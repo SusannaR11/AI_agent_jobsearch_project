@@ -59,3 +59,5 @@ def main():
 if __name__ == "__main__":
     main()
 
+# to run, run as package from root folder:
+# uv run python -m preprocessing.fetch_search_trends
