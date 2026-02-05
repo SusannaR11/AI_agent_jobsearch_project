@@ -17,6 +17,12 @@ dependencies = [
     "requests>=2.32.5",
     "streamlit>=1.40.0",
     "uvicorn>=0.40.0",
+    "lancedb==0.25.3",
+    "pydantic-ai",
+    "python-dotenv",
+    "pyarrow",
+    "google-genai>=1.62.0",
+    "google-generativeai>=0.8.6",
 ]
 
 [project.scripts]
