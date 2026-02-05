@@ -7,7 +7,7 @@ import altair as alt
 import matplotlib.pyplot as plt
 from ai_agent_jobsearch_project.frontend.constants import IMG_PATH
 
-API = "http://127.0.0.1:8000"
+API_ROKKA = "http://127.0.0.1:8000"
 
 st.set_page_config(layout="wide") #more space, wider page
 
@@ -30,7 +30,7 @@ def show_job_insights():
 
     with acol1:
         st.markdown("### Topp 10 sökta jobb")
-        data = requests.get(f"{API}/top-searches", params={"days": days}).json()
+        data = requests.get(f"{API_ROKKA}/top-searches", params={"days": days}).json()
         df_searches = pd.DataFrame(data)
 
         if df_searches.empty:
@@ -58,7 +58,7 @@ def show_job_insights():
 
     with acol2:
         st.markdown("### Topp 10 annonserade jobb")
-        data = requests.get(f"{API}/top-job-listings", params={"days": days}).json()
+        data = requests.get(f"{API_ROKKA}/top-job-listings", params={"days": days}).json()
         df_jobs = pd.DataFrame(data)
 
         if df_jobs.empty:
@@ -141,9 +141,10 @@ with st.sidebar:
 if selected == "Arbetsmarknadsinsikter":
     show_job_insights()
 elif selected == "Yrkesbarometern":
-    show_barometer()
-else:
+#    show_barometer():
+#else:
     show_home()
+
 
 
 

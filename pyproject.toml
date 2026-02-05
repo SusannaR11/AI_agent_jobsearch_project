@@ -6,24 +6,25 @@ readme = "README.md"
 authors = [
     { name = "suseliwen", email = "susanne.wenblad@gmail.com" }
 ]
-requires-python = ">=3.12,<3.13"
+requires-python = ">=3.11,<3.12"
 dependencies = [
     "altair>=5",
-    "duckdb>=1.4.4",
+    "dotenv>=0.9.9",
+    "duckdb>=1.4.3",
     "fastapi>=0.128.0",
-    "ipykernel>=7.1.0",
-    "matplotlib>=3.10.8",
-    "pandas>=2.2,<3",
-    "requests>=2.32.5",
-    "streamlit>=1.40.0",
-    "uvicorn>=0.40.0",
-    "lancedb==0.25.3",
-    "pydantic-ai",
-    "python-dotenv",
-    "pyarrow",
-    "google-genai>=1.62.0",
+    "google-genai>=1.60.0",
     "google-generativeai>=0.8.6",
+    "lancedb>=0.25.3, <0.26",
+    "matplotlib>=3.10.8",
+    "pandas<3",
+    "pydantic>=2.12.5",
+    "pydantic-ai>=1.54.0",
+    "requests>=2.32.5",
+    "sentence-transformers>=5.2.0",
+    "streamlit>=1.31",
     "streamlit-option-menu>=0.4.0",
+    "torch<2.2",
+    "uvicorn>=0.40.0",
 ]
 
 [project.scripts]
