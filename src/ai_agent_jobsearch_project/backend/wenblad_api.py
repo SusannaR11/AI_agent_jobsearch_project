@@ -99,3 +99,6 @@ def inspect_occupations():
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))    
+    
+# to run:
+# uv run uvicorn ai_agent_jobsearch_project.backend.wenblad_api:app --reload --port 8001

@@ -125,3 +125,17 @@ rag_playground/db/
 **/lancedb*/
 **/*.lance
 rag_playground/
+
+# Lance
+.Lance
+
+# pycache
+*__pycache__
+*.pyc
+
+#Duckdb
+*.Duckdb
+*.wal
+
+# vector db
+knowledge_base/
