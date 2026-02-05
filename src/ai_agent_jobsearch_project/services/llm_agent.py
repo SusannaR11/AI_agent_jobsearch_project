@@ -1,19 +1,20 @@
 import os
-from dotenv import load_dotenv
 from pydantic_ai import Agent
 from ai_agent_jobsearch_project.backend.schemas import LLMAnalysis, OccupationMatch
+from ai_agent_jobsearch_project.backend.settings import get_gemini_api_key
 
-load_dotenv()
+api_key = get_gemini_api_key()
 
 agent = Agent(
     "google-gla:gemini-2.5-flash",
     system_prompt=(
-        "Du är en expert på den svenska arbetsmarknaden. "
-        "Svara pedagogiskt baserat på bifogad fakta. "
-        "Ditt svar SKA bestå av två delar: "
-        "1. En sammanfattning av prognosen. "
-        "2. Ett konkret tips/rekommendation."
-        "Du svarar primärt på nationell data om inget län är valt. "         
+    "Du är en expert på den svenska arbetsmarknaden. "
+    "Svara pedagogiskt baserat på bifogad fakta. "
+    "Ditt svar SKA bestå av två delar: "
+    "1. En sammanfattning av prognosen. "
+    "2. Ett konkret tips/rekommendation. "
+    "Avsluta alltid med att fråga om användaren vill jämföra med ett annat län "
+    "eller se framtidsutsikter för ett annat yrke." # <--- Detta skapar interaktivitet!
     )
 )
 

@@ -129,7 +129,7 @@ with col1:
     if st.button("💻 Hur ser framtiden ut för systemutvecklare?"):
         st.session_state.quick_data = {
             "query": "Hur ser framtiden ut för systemutvecklare?",
-            "area": "Data/IT"  # Se till att detta matchar exakt vad som står i din databas
+            "area": "Data/IT"  
         }
 with col2:
     if st.button("📈 Hur ser framtiden ut för ekonomer?"):
@@ -144,12 +144,10 @@ with col3:
             "area": "Hälso- och sjukvård"
         }
 
-# Logik för att hantera om en knapp trycktes
+
 if "quick_data" in st.session_state and st.session_state.quick_data:
-    user_input = st.session_state.quick_data["query"]
-    # Vi tvingar selected_area att bli det som knappen representerar
-    selected_area = st.session_state.quick_data["area"]
-    # Vi rensar även quick_data så det inte fastnar i en loop
+    user_input = st.session_state.quick_data["query"]    
+    selected_area = st.session_state.quick_data["area"]   
     del st.session_state.quick_data
 
 
