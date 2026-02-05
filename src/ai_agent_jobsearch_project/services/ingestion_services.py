@@ -71,17 +71,20 @@ def create_and_append_records(db, table_name: str, rows: list[dict], batch_size:
     """
     table = None
     inserted_total = 0
+    total_rows = len(rows)
+    print(f"Startar inläsning av {total_rows} rader")
 
-    for batch_rows in chunk_list(rows, batch_size):
+    for i, batch_rows in enumerate(chunk_list(rows, batch_size)):        
         records = build_records(batch_rows)
 
         if table is None:
             table = create_or_overwrite_table(db, table_name, records)
-        
         else:
             table = add_records(table, records)
     
-        inserted_total += len(records)
+        inserted_total += len(records)  
+        percent = (inserted_total / total_rows) * 100
+        print(f"Batch {i+1} klar: {inserted_total}/{total_rows} rader bearbetade")     
     
     return table, inserted_total
 

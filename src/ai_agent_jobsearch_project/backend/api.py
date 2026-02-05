@@ -5,7 +5,7 @@ from typing import List
 from ai_agent_jobsearch_project.backend.schemas import OccupationMatch, ChatRequest, ChatResponse
 from ai_agent_jobsearch_project.services.occupation_service import get_occupation_matches
 from ai_agent_jobsearch_project.embeddings.vector_store import get_table
-
+from ai_agent_jobsearch_project.services.llm_agent import generate_chat_analysis
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -40,14 +40,13 @@ def ready_check():
 @app.get("/areas")
 def list_areas():
     try:
-        table = get_table("yrken")      
-    except Exception:
-        raise HTTPException(status_code=500, detail="Table 'yrken' not found. Run ingestion first.")
-
-    df = table.to_pandas()
-    areas = sorted(df["yrkesomrade"].dropna().unique().tolist())
-
-    return {"areas": areas}  
+        table = get_table("yrken")
+        df = table.to_pandas()
+        areas = sorted(df["yrkesomrade"].dropna().unique().tolist())        
+        
+        return {"areas": areas} 
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.get("/forecast", response_model=List[OccupationMatch])
@@ -71,14 +70,34 @@ def forecast(
 def chat(req: ChatRequest):    
     try:
         matches = get_occupation_matches(req.yrkesomrade, req.message, req.lan, limit=3)
-        
+        analysis = generate_chat_analysis(req.message, matches)
         
         return ChatResponse(
             matched_yrke=matches[0].yb_yrke if matches else None,
-            analysis=None,  
+            analysis=analysis, # Måste vara en dict eller pydantic-modell
+            raw_data=matches  
         )
     except Exception as e:
+        # Detta skriver ut det RIKTIGA felet i uvicorn-terminalen
+        import traceback
+        traceback.print_exc() 
         raise HTTPException(status_code=500, detail=str(e))
-   
+
+
+
+#Kontroll-utskrift av hämtade yrken pga felsökning.        
+@app.get("/inspect/occupations")
+def inspect_occupations():
+    try:
+        table = get_table("yrken")        
+        df = table.to_pandas()
         
-    
+        unique_occupations = sorted(df["yb_yrke"].unique().tolist())
+        
+        return {
+            "total_rows": len(df),
+            "unique_count": len(unique_occupations),
+            "occupations": unique_occupations
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))    
