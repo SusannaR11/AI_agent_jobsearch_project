@@ -1,8 +1,8 @@
 import json
 from pathlib import Path
 import lancedb
-from backend.data_models import JobAd
-from backend.constants import VECTOR_DATABASE_PATH
+from ai_agent_jobsearch_project.backend.data_models import JobAd
+from ai_agent_jobsearch_project.frontend.constants import VECTOR_DATABASE_PATH
 
 DATA_FILE = Path("data/jobads_2026-02-05.jsonl")
 

@@ -1,7 +1,7 @@
 from pathlib import Path
 import json
 import re
-from backend.constants import DATA_DIR
+from ai_agent_jobsearch_project.frontend.constants import DATA_DIR
 
 FILE_RE = re.compile(r"jobsearch-(\d{4}-\d{2}-\d{2})-daily-public\.json")
 

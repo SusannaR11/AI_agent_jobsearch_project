@@ -1,8 +1,8 @@
 # defines end points for api
 
 import pandas as pd
-from backend.data_loader_search_trends import load_last_n
-from preprocessing.fetch_jobads import fetch_jobads
+from ai_agent_jobsearch_project.data.data_loader_search_trends import load_last_n
+from ai_agent_jobsearch_project.services.fetch_jobads import fetch_jobads
 #from constants import DATA_DIR, JOBADS_URL, FILE_RE
 
 TZ = "Europe/Stockholm"

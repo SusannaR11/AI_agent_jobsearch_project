@@ -1,5 +1,5 @@
 import requests
-from backend.constants import JOBADS_URL
+from ai_agent_jobsearch_project.frontend.constants import JOBADS_URL
 
 def fetch_jobads(limit=200, q =None):
     params={"limit":limit}

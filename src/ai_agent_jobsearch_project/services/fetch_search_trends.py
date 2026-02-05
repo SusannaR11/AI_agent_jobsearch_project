@@ -3,7 +3,7 @@ import re
 import zipfile
 import io
 import requests
-from backend.constants import DATA_DIR
+from ai_agent_jobsearch_project.frontend.constants import DATA_DIR
 
 # pick up search trend json files from url
 BASE_URL = "https://data.arbetsformedlingen.se/annonser/search-trends/"

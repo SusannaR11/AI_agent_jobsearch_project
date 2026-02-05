@@ -1,18 +1,21 @@
+# Load from jobads API to jsonl - text-based fileformat efficient for ML
+
 import json
 from pathlib import Path
-from datetime import datetime
 import pandas as pd
-from preprocessing.fetch_jobads import fetch_jobads
+from datetime import datetime
+from ai_agent_jobsearch_project.services.fetch_jobads import fetch_jobads
 
-OUT_DIR = Path("data/jobads_docs")
-OUT_DIR.mkdir(parents=True, exist_ok=True)
+# path - to go in constants.py
+DATA_DIR = Path("data")
+DATA_DIR.mkdir(exist_ok=True)
 
 def main():
-    hits = fetch_jobads(limit=50) # limit to 50 with test set
+    hits = fetch_jobads(limit=50)  # limit 50
     df = pd.json_normalize(hits)
 
     today = datetime.now().date().isoformat()
-    out_path = OUT_DIR / f"jobads_{today}.jsonl"
+    out_path = DATA_DIR / f"jobads_{today}.jsonl"
 
     with out_path.open("w", encoding="utf-8") as f:
         for _, row in df.iterrows():
@@ -30,8 +33,7 @@ def main():
 
             f.write(json.dumps(doc, ensure_ascii=False) + "\n")
 
-    print("Saved:", out_path)
+    print("Saved file:", out_path)
 
 if __name__ == "__main__":
     main()
-

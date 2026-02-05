@@ -1,8 +1,8 @@
 from fastapi import FastAPI
-from backend.services import get_top_job_listings, get_top_searches
-from backend.constants import DATA_DIR
-from backend.data_models import Prompt
-from backend.rag import rag_agent
+from ai_agent_jobsearch_project.services.services import get_top_job_listings, get_top_searches
+from ai_agent_jobsearch_project.frontend.constants import DATA_DIR
+from ai_agent_jobsearch_project.backend.data_models import Prompt
+from ai_agent_jobsearch_project.services.rag import rag_agent
 
 app = FastAPI()
 

@@ -8,57 +8,18 @@ API = "http://127.0.0.1:8000"
 
 st.set_page_config(layout="wide") #more space, wider page
 
-st.title("Job market insights")
-st.subheader("Comparing search interest vs. posted job ads")
+st.title("Arbetsmarknadsinsikter")
+st.subheader("Jämför sökintresse vs. jobbannonser")
 
-days = st.slider("Days", 1, 7, 14)
+days = st.slider("Dagar", 1, 7, 14)
 
-col1, col2 = st.columns([1, 1], gap="large")
 
-#---- left column -------
 #--- 'altair' chart tip from streamlit.io
-with col1: 
-    st.markdown("### Top searched jobs") 
-    data = requests.get(f"{API}/top-searches", params={"days": days}).json() 
-    df_searches = pd.DataFrame(data) 
-    #validation if no search data from API 
-    if df_searches.empty: 
-        st.info("No search data returned from API") 
-    else: 
-        fig = plt.figure() 
-        df_searches = df_searches.sort_values("count") 
-        plt.barh(df_searches["label"], df_searches["count"]) 
-        plt.title(f"Top searches (last {days} days)") 
-        plt.tight_layout() 
-        st.pyplot(fig)
-
-#-----right column -------
-with col2:
-    st.subheader("Top advertised jobs")
-    data = requests.get(f"{API}/top-job-listings", params={"days": days}).json()
-
-    df_jobs = pd.DataFrame(data)
-
-    # validation if empty
-    if df_jobs.empty:
-        st.info("No job ads data returned from API.")
-    else:
-        fig = plt.figure()
-        df_jobs = df_jobs.sort_values("count")
-        plt.barh(df_jobs["label"], df_jobs["count"])
-        plt.title(f"Top job ads (last {days} days)")
-        plt.tight_layout()
-        st.pyplot(fig)
-
-
-# to run streamlit frontend:
-# uv run streamlit run frontend/app.py
-
-#-----Altair tester
-acol1, acol2 = st.columns([1.3, 1.3], gap="large")
+#-----Altair charts -------
+acol1, acol2 = st.columns([1.4, 1.4], gap="large")
 
 with acol1:
-    st.markdown("### Top searched jobs")
+    st.markdown("### Topp 10 sökta jobb")
     data = requests.get(f"{API}/top-searches", params={"days": days}).json()
     df_searches = pd.DataFrame(data)
 
@@ -77,16 +38,16 @@ with acol1:
             .mark_bar(cornerRadius=6)
             .encode(
                 x=alt.X("count:Q", title="Search Count"),
-                y=alt.Y("label:N", sort="-x", title="Job Title"),
+                y=alt.Y("label:N", sort="-x", title=None, axis=alt.Axis(labelLimit=260, labelPadding=10)),
                 tooltip=[alt.Tooltip("label:N"), alt.Tooltip("count:Q")],
             )
-            .properties(title=f"Top searches (last {days} days)")
+            .properties(title=f"Flest sökningar (senaste {days} dagarna)", height = 420,)
         )
 
         st.altair_chart(chart, width="stretch")
 
 with acol2:
-    st.markdown("### Top advertised jobs")
+    st.markdown("### Topp 10 annonserade jobb")
     data = requests.get(f"{API}/top-job-listings", params={"days": days}).json()
     df_jobs = pd.DataFrame(data)
 
@@ -103,10 +64,10 @@ with acol2:
             .mark_bar(cornerRadius=6)
             .encode(
                 x=alt.X("count:Q", title="Job Ads Count"),
-                y=alt.Y("label:N", sort="-x", title="Job Title"),
+                y=alt.Y("label:N", sort="-x", title=None, axis=alt.Axis(labelLimit=260, labelPadding=10)),
                 tooltip=[alt.Tooltip("label:N"), alt.Tooltip("count:Q")],
             )
-            .properties(title=f"Top job ads (last {days} days)")
+            .properties(title=f"Flest sökta jobb (senaste {days} dagarna)", height= 420,)
         )
 
         st.altair_chart(chart, width="stretch") 
@@ -116,9 +77,10 @@ with acol2:
 
 def layout():
 
-    st.markdown("# Jobsökarens agent")
+    st.markdown("# Jobbsökarens agent")
     st.markdown("Fråga mig om vad som krävs i arbetslivet")
-    text_input = st.text_input(label="Fråga mig")
+    st.markdown("Jag svarar på frågor om de annonserade jobben och vilka kunskaper de kräver")
+    text_input = st.text_input(label="Skriv något:")
 
     if st.button("Send") and text_input.strip() != "":
         response = requests.post(
@@ -140,3 +102,6 @@ def layout():
 if __name__ == "__main__":
     layout()
 
+
+# to run streamlit frontend:
+# uv run streamlit run src/ai_agent_jobsearch_project/frontend/app.py

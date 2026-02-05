@@ -3,7 +3,7 @@ import pandas as pd
 from datetime import date
 from collections import Counter
 
-from preprocessing.fetch_jobads import fetch_jobads
+from ai_agent_jobsearch_project.services.fetch_jobads import fetch_jobads
 
 def count_occ_group(hits):
     c = Counter()
