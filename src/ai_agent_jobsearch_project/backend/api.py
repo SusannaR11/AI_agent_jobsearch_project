@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from ai_agent_jobsearch_project.services.services import get_top_job_listings, get_top_searches
+from ai_agent_jobsearch_project.services.occupation_services import get_top_job_listings, get_top_searches
 from ai_agent_jobsearch_project.frontend.constants import DATA_DIR
 from ai_agent_jobsearch_project.backend.data_models import Prompt
 from ai_agent_jobsearch_project.services.rag import rag_agent
@@ -21,5 +21,5 @@ async def rag_query(query:Prompt):
 
 
 # to run:
-# uv run uvicorn backend.api:app --reload
+# uv run uvicorn ai_agent_jobsearch_project.backend.api:app --reload
 
