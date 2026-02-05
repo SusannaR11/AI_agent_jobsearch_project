@@ -7,8 +7,6 @@ from ai_agent_jobsearch_project.services.occupation_service import get_occupatio
 from ai_agent_jobsearch_project.embeddings.vector_store import get_table
 from ai_agent_jobsearch_project.services.llm_agent import generate_chat_analysis
 
-from dotenv import load_dotenv
-load_dotenv()
 
 app = FastAPI(title = "Yrkesbarometern API")
 

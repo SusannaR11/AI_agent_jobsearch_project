@@ -2,8 +2,8 @@
 
 def build_document(row) -> str:
     """
-    Creating a document string from first row in Yrkesbarometern. 
- 
+    Transforms a single row from 'Yrkesbarometern' dataset 
+    to a structured textdocument for vector embedding. 
     """
 
     parts = [
