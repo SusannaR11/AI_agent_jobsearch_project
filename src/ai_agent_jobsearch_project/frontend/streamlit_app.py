@@ -1,17 +1,25 @@
 import streamlit as st
 import requests
-from difflib import get_close_matches   #Tips från ChatGPT - används för att matcha användarens imatade yrke mot yrken i yrkesbarometern
 from ai_agent_jobsearch_project.frontend.constants import LAN_OPTIONS
-from ai_agent_jobsearch_project.frontend.api_client import (
-    get_areas,
-    get_forecast,
-    get_occupations,
-)
+from ai_agent_jobsearch_project.frontend.api_client import get_areas, post_chat
 
 
-#===================== Hjälpfunktion - länskoder  =====================
+#===================== Hjälpfunktioner =====================
+
+#----------- Länskoder ------------
 LAN_CODE_TO_NAME = dict(LAN_OPTIONS)  # "" -> "Nationellt ...", "03" -> "Uppsala län", osv
 
+#----------- Cache ------------
+@st.cache_data(show_spinner="AI:n tänker...")
+def get_chat_response(yrkesomrade, message, lan):
+    
+    payload = {
+        "yrkesomrade": yrkesomrade,
+        "message": message,
+        "lan": lan
+    }
+    response = requests.post(f"{API_BASE}/chat", json=payload)
+    return response.json()
 
 #===================== Session state =====================
 if "areas" not in st.session_state:
@@ -19,9 +27,6 @@ if "areas" not in st.session_state:
 
 if "selected_area" not in st.session_state:
     st.session_state.selected_area = None
-
-if "limit" not in st.session_state:
-    st.session_state.limit = 5
 
 if "lan" not in st.session_state:
     st.session_state.lan = None
@@ -31,6 +36,9 @@ if "occupations" not in st.session_state:
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
+
+if "api_usage" not in st.session_state:
+    st.session_state.api_usage = 0
 
 
 #===================== Konfiguration =====================
@@ -43,7 +51,7 @@ SHOW_MANUAL_UI = False
 
 
 #===================== SIDOMENY =====================
-with st.sidebar:
+with st.sidebar: 
     with st.expander("Teknisk information"):
         st.caption("GET /health")
         st.write("Appen kör ✔️")
@@ -53,168 +61,140 @@ with st.sidebar:
                 response = requests.get(f"{API_BASE}/health", timeout=5)
                 st.json(response.json())
             except Exception as e:
-                st.error(f"Kunde inte nå backend: {e}")
+                st.error(f"Kunde inte nå backend: {e}")    
+
+    with st.expander("API-Monitor"):                        #Kod genererad från Gemini för att ha koll på tokens. 
+        # Beräkna status
+        limit = 15  # Geminis vanliga RPM (Requests Per Minute) limit
+        usage = st.session_state.api_usage
+        
+        # Visa en progress bar
+        progress = min(usage / limit, 1.0)
+        st.progress(progress)
+        st.caption(f"Anrop: {usage} av {limit} (per minut)")
+        
+        if usage >= limit:
+            st.error("⚠️ Gräns nådd! Vänta 60 sek.")
+        elif usage > 10:
+            st.warning("🟡 Närmar dig gränsen")
+        else:
+            st.success("🟢 API-status: OK")
+
+        # Knapp för att nollställa räknaren manuellt om man vill
+        if st.button("Nollställ mätare"):
+            st.session_state.api_usage = 0
 
     st.divider()
+    if st.button("Rensa konversation"):
+        st.session_state.messages = []
+        # Vi kan även nollställa vald sökning om vi vill
+        st.session_state.selected_area = st.session_state.areas[0] if st.session_state.areas else None
+        # För att tvinga Streamlit att rita om sidan direkt:
+        st.rerun()
+
+
+    st.header("Filtrera din sökning")
     st.subheader("Välj yrkesområde")
 
-    if st.button("Ladda yrkesområden"):
-        try:
+    if st.session_state.areas is None:
+        try:           
             st.session_state.areas = get_areas()
         except Exception as e:
-            st.error(f"Kunde inte hämta yrkesområden: {e}")
+            st.error(f"Kunde inte ladda yrkesområden: {e}")            
+            st.session_state.areas = ["Data/IT"]            #Tips från Gemini - Data/IT som default så nedanstående selctbox inte kraschar!
 
-    if st.session_state.areas:
-        st.session_state.selected_area = st.selectbox(
-            "Yrkesområde",
-            st.session_state.areas,
-        )
-
-    st.divider()
-    st.subheader("Yrken (för chat-matchning)")
-
-    if st.button("Ladda yrken"):
-        if not st.session_state.selected_area:
-            st.warning("Välj yrkesområde först.")
-        else:
-            try:
-                st.session_state.occupations = get_occupations(
-                    yrkesomrade=st.session_state.selected_area,
-                    lan=st.session_state.lan,
-                )
-                st.success(f"Hämtade {len(st.session_state.occupations)} yrken.")
-            except Exception as e:
-                st.error(f"Kunde inte hämta yrken: {e}")
-
-    st.divider()
-    st.subheader("Filtera din sökning")
-
-    st.session_state.limit = st.slider(
-        "Antal träffar",
-        min_value=1,
-        max_value=15,
-        value=st.session_state.limit,
+    selected_area = st.selectbox(
+        "Välj yrkesområde", 
+      options=st.session_state.areas
     )
+    st.session_state.selected_area = selected_area
 
-    st.divider()
-    st.subheader("Län (valfritt)")
+    lan_labels = [f"{code} - {name}" if code else name for code, name in LAN_OPTIONS] #Kod genererad med ChatGPT för att få till kortare kod än tidigare
+    chosen_lan_label = st.selectbox("Välj län (valfritt)", lan_labels)    
+    selected_lan = chosen_lan_label.split(" - ")[0] if " - " in chosen_lan_label else None
 
-    lan_labels = [f"{code} - {name}" if code else name for code, name in LAN_OPTIONS] #OBS! Detta är inte egen kod, utan kod genererad från ChatGPT pga ville få till en lösning med namn på län ist för länskoder
-    lan_codes = [code for code, _ in LAN_OPTIONS]
-
-    current_code = st.session_state.lan or ""
-    current_index = lan_codes.index(current_code) if current_code in lan_codes else 0
-
-    chosen = st.selectbox("Välj län", lan_labels, index=current_index)
-
-    chosen_index = lan_labels.index(chosen)
-    chosen_code = lan_codes[chosen_index]
-    st.session_state.lan = chosen_code if chosen_code else None
-
+ 
 
 #===================== HUVUDSIDA: chat-historik =====================
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
 
-
-#===================== UI för felsökning - ej aktiverat per default =====================
-if SHOW_MANUAL_UI:
-    st.divider()
-    st.info(" UI för felsökning är på ")
-
-    if st.session_state.occupations:
-        selected = st.selectbox("Välj yrke", st.session_state.occupations)
-        if st.button("Visa prognos"):
-            results = get_forecast(
-                yrkesomrade=st.session_state.selected_area,
-                query_yrke=selected,
-                lan=st.session_state.lan,
-                limit=st.session_state.limit,
-            )
-            st.write(results)
-
-
 #===================== CHAT INPUT =====================
 st.divider()
-user_input = st.chat_input("Fråga mig om ett yrke, t.ex. 'Hur ser framtiden ut för mjukvaruutvecklare?'")
+st.write("Snabbsökning")
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    if st.button("💻 Hur ser framtiden ut för systemutvecklare?"):
+        st.session_state.quick_data = {
+            "query": "Hur ser framtiden ut för systemutvecklare?",
+            "area": "Data/IT"  # Se till att detta matchar exakt vad som står i din databas
+        }
+with col2:
+    if st.button("📈 Hur ser framtiden ut för ekonomer?"):
+        st.session_state.quick_data = {
+            "query": "Hur ser framtiden ut för ekonomer?",
+            "area": "Administration, ekonomi, juridik"
+        }
+with col3:
+    if st.button("🩺 Hur ser framtiden ut för sjuksköterskor?"):
+        st.session_state.quick_data = {
+            "query": "Hur ser framtiden ut för sjuksköterskor?",
+            "area": "Hälso- och sjukvård"
+        }
+
+# Logik för att hantera om en knapp trycktes
+if "quick_data" in st.session_state and st.session_state.quick_data:
+    user_input = st.session_state.quick_data["query"]
+    # Vi tvingar selected_area att bli det som knappen representerar
+    selected_area = st.session_state.quick_data["area"]
+    # Vi rensar även quick_data så det inte fastnar i en loop
+    del st.session_state.quick_data
 
 
-def match_occupation(user_text: str, occupations: list[str]) -> str | None:
-    """
-    Matches users text to a list of occupations from Yrkesbarometern.           
-    1) exact match (case-insensitive)
-    2) fuzzy match with difflib
-    """
-    q = user_text.strip()
-    if not q:
-        return None
+else:
+    user_input = st.chat_input("Fråga om ett yrke, t.ex. 'Hur ser framtiden ut för ekonomer?'") 
+st.divider()
 
-    #Exakt match mot det yrke som anväbdaren registrerat
-    for y in occupations:
-        if y.lower() == q.lower():
-            return y
 
-    #Fuzzy match
-    matches = get_close_matches(q, occupations, n=1, cutoff=0.6)
-    if matches:
-        return matches[0]
-
-    return None
 
 
 if user_input:
+    st.session_state.api_usage += 1
+    st.session_state.messages.append({"role": "user", "content": user_input})    
     
-    st.session_state.messages.append({"role": "user", "content": user_input})
+    with st.chat_message("user"):
+        st.markdown(user_input)
+    
+    with st.chat_message("assistant"):
+        with st.spinner("Analyserar din fråga..."):
+            try:
+                response = get_chat_response(
+                    message=user_input,
+                    yrkesomrade=selected_area,
+                    lan=selected_lan
+                )
+                
+                analysis = response.get("analysis")
+                if analysis:
+                    full_response = f"{analysis['summary']}\n\n**Tips:** {analysis['recommendation']}"
+                    st.markdown(full_response)
+                    
+                   
+                    st.session_state.messages.append({"role": "assistant", "content": full_response})
+                
+                    
+                    if response.get("raw_data"):
+                        with st.expander("Se underlag från Yrkesbarometern"):
+                            st.json(response["raw_data"])
+                else:
+                    st.warning("Hittade ingen data för det yrket.")
+            
+            except Exception as e:
+                st.error(f"Ett fel uppstod: {e}")
+    
+    
 
    
-    if not st.session_state.selected_area:
-        assistant_text = "Välj först ett **yrkesområde** i sidomenyn."
-    elif not st.session_state.occupations:
-        assistant_text = "Klicka **Ladda yrken** i sidomenyn så jag vet vilka yrken jag kan matcha mot."
-    else:
-        matched_yrke = match_occupation(user_input, st.session_state.occupations)
 
-        if not matched_yrke:            
-            examples = ", ".join(st.session_state.occupations[:5])
-            assistant_text = (
-                "Jag kunde inte matcha yrket du skrev mot kända yrken inom valt område.\n\n"
-                f"Exempel på yrken i detta område: **{examples}**\n\n"
-                "Testa att skriva ett av dem (eller välj annat yrkesområde)."
-            )
-        else:
-            
-            results = get_forecast(
-                yrkesomrade=st.session_state.selected_area,
-                query_yrke=matched_yrke,
-                lan=st.session_state.lan,
-                limit=st.session_state.limit,
-            )
-
-            if not results:
-                assistant_text = (
-                    f"Jag tolkar ditt yrke som **{matched_yrke}**, men hittade ingen prognos just nu. "
-                    "Testa ett annat yrke eller byt yrkesområde."
-                )
-            else:
-                top = results[0]
-                alternatives = "\n".join(
-                    [
-                        f"- {r.get('yb_yrke','')} ({LAN_CODE_TO_NAME.get(r.get('lan',''), 'Nationellt')})"
-                        for r in results[1:4]
-                    ]
-                )
-
-                assistant_text = f"""Jag tolkar ditt yrke som **{matched_yrke}**.
-
-- Prognos: {top.get('prognos','')}
-- Jobbmöjligheter: {top.get('jobbmojligheter','')}
-- Rekrytering: {top.get('rekryteringssituation','')}
-
-**Alternativ jag också hittade:**
-{alternatives if alternatives else "- (inga fler förslag)"}
-"""
-
-    st.session_state.messages.append({"role": "assistant", "content": assistant_text})
-
-    st.rerun()
