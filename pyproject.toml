@@ -23,6 +23,7 @@ dependencies = [
     "pyarrow",
     "google-genai>=1.62.0",
     "google-generativeai>=0.8.6",
+    "streamlit-option-menu>=0.4.0",
 ]
 
 [project.scripts]
