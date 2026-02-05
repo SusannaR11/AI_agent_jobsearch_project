@@ -1,7 +1,7 @@
 import os
 import requests
 
-API_BASE = os.getenv("API_BASE_URL", "http://127.0.0.1:8000")
+API_BASE = os.getenv("API_BASE_URL", "http://127.0.0.1:8001")
 
 def get_areas():
     r = requests.get(f"{API_BASE}/areas", timeout=10)

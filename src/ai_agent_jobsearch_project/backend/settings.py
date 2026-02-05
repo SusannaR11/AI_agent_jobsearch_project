@@ -7,11 +7,10 @@ load_dotenv()
 def project_root() -> Path:
     return Path(__file__).resolve().parents[3]
 
-def get_api_key() -> str:
+def get_gemini_api_key() -> str:
     key = os.getenv("GOOGLE_API_KEY")
     if not key:
-        raise ValueError("Kunde inte hitta api-nyckel i .env-filen.")
-    return key
+        raise ValueError(f"Kunde inte hitta GOOGLE_API_KEY i .env")
 
 DEFAULT_LANCEDB_DIR = project_root() /"rag_playground" / "db" / "yrkesbarometer_vectors"
 

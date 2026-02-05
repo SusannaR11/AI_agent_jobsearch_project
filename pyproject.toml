@@ -16,6 +16,7 @@ dependencies = [
     "google-generativeai>=0.8.6",
     "lancedb>=0.25.3, <0.26",
     "matplotlib>=3.10.8",
+    "numpy<2",
     "pandas<3",
     "pydantic>=2.12.5",
     "pydantic-ai>=1.54.0",
@@ -23,7 +24,7 @@ dependencies = [
     "sentence-transformers>=5.2.0",
     "streamlit>=1.31",
     "streamlit-option-menu>=0.4.0",
-    "torch<2.2",
+    "torch==2.4.1",
     "uvicorn>=0.40.0",
 ]
 
