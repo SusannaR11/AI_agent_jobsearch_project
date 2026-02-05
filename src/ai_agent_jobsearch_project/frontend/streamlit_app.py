@@ -3,12 +3,12 @@ import requests
 from ai_agent_jobsearch_project.frontend.constants import LAN_OPTIONS
 from ai_agent_jobsearch_project.frontend.api_client import get_areas
 
-# Definiera din backend-port här så den är lätt att ändra
+
 API_WENBLAD = "http://127.0.0.1:8001"
 
 def show_yrkesbarometern():
     # ===================== Initiera Session State =====================
-    # Vi använder unika namn (t.ex. 'messages_wb') för att inte krocka med klasskompisens variabler
+
     if "areas" not in st.session_state:
         st.session_state.areas = None
     if "messages_wb" not in st.session_state:
@@ -87,7 +87,7 @@ def show_yrkesbarometern():
             with st.spinner("Analyserar..."):
                 try:
                     payload = {"yrkesomrade": final_area, "message": final_input, "lan": selected_lan}
-                    # Anropa din backend på port 8001
+                    # Anropa backend på port 8001
                     response = requests.post(f"{API_WENBLAD}/chat", json=payload).json()
                     
                     analysis = response.get("analysis")

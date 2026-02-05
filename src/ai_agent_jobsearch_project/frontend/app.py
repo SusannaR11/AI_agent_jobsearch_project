@@ -9,6 +9,7 @@ from ai_agent_jobsearch_project.frontend.constants import IMG_PATH
 
 API_ROKKA = "http://127.0.0.1:8000"
 
+
 st.set_page_config(layout="wide") #more space, wider page
 
 def show_home():
