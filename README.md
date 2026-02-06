@@ -26,9 +26,10 @@ src/ai_agent_jobsearch_project/
 └── data/               # Local databases (DuckDB/LanceDB) and raw JSON sources
 
 --- 
+```
 
 ## Installation
-```
+
 
 1. ### Clone the repository:
 git clone https://github.com/SusannaR11/AI_agent_jobsearch_project.git
