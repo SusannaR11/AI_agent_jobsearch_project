@@ -1,4 +1,4 @@
-# Labor Market Agent 🤖
+# Labor Market Agent
 
 ### An intelligent search and analysis application using RAG (Retrieval-Augmented Generation) to navigate Swedish labor market forecasts and real-time job data.
 
@@ -25,7 +25,10 @@ src/ai_agent_jobsearch_project/
 ├── services/           # LLM Agent logic, RAG implementation, and data ingestion
 └── data/               # Local databases (DuckDB/LanceDB) and raw JSON sources
 
+--- 
+
 ## Installation
+```
 
 1. ### Clone the repository:
 git clone https://github.com/SusannaR11/AI_agent_jobsearch_project.git
