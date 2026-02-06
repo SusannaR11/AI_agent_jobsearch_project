@@ -1,6 +1,6 @@
 # AI agent / RAG project using Arbetsförmedlingen data   
-### An intelligent search and analysis application using RAG (Retrieval-Augmented Generation) to help users navigate Swedish labor market forecasts from Arbetsförmedlingen.
-### Developed as part of the course Advanced Object-Oriented Programming 2 at NBI/Handelsakademin.
+#### An intelligent search and analysis application using RAG (Retrieval-Augmented Generation) to help users navigate Swedish labor market forecasts from Arbetsförmedlingen.
+#### Developed as part of the course Advanced Object-Oriented Programming 2 at NBI/Handelsakademin.
 Authors:      
 Susanna Rokka 
 Susanne Wenblad
@@ -18,24 +18,25 @@ Susanne Wenblad
 
 ## Project-struktur
 src/ai_agent_jobsearch_project/
-├── assets/             # Bilder och logotyper
-├── backend/            # FastAPI (rokka_api.py & wenblad_api.py), Scheman och Settings
-├── frontend/           # Streamlit (main_app.py) och API-klient
-├── services/           # LLM-agent, RAG-logik och Ingestion
-└── data/               # Lokala databaser och JSON-filer
+├── assets/ # Images and logos
+├── backend/ # FastAPI backends (rokka_api.py, wenblad_api.py)
+├── frontend/ # Streamlit app (main_app.py) and API client
+├── services/ # LLM agent, RAG logic and ingestion
+└── data/ # Local databases and JSON files
 
 ## Installation
 
 1. ### Clone the repository:
 git clone https://github.com/SusannaR11/AI_agent_jobsearch_project.git
+
 cd AI_agent_jobsearch_project
 
 2. ### Set up a virtual environment and install dependencies:
-   - python -m venv .venv
-   - source .venv/Scripts/activate # For Windows/Git Bash
-   - source .venv/bin/activate  # For Mac
-   - pip install -r requirements.txt
-   - pip install -e .
+python -m venv .venv
+source .venv/Scripts/activate # For Windows/Git Bash
+source .venv/bin/activate  # For Mac
+pip install -r requirements.txt
+pip install -e .
 
 3. ### Configure Environment Variables: 
 Create a .env file in the root directory and add your API key:   
@@ -43,24 +44,35 @@ Create a .env file in the root directory and add your API key:
 
 
 ## Running the Application
-The application utilizes a dual-backend architecture to separate labor market forecasts from real-time job advertisements.
-The API:s run on different ports. 
+The application uses two backend APIs, each running on a separate port.
+
+---
+
+### Step 1: Data ingestion (first run only)
+
+Populate the vector database with occupational forecasts:
+python -m src.ai_agent_jobsearch_project.scripts/dev__main.py
 
 
-### Usage Chatbot - prognosis        
-1. Data Ingestion - Occupational Forecast API  (First time only)   
-      Populate the vector database:
-      python -m src.ai_agent_jobsearch_project.scrpits/dev__main.py
-         
+### Step 2: Start the backends
 
-1. Start the Backends (Run in two separate terminals)
-        Market Insights API (Port 8000):
-        uvicorn src.ai_agent_jobsearch_project.backend.rokka_api:app --port 8000 --reload
+Run each command in separate terminals.
 
-        Occupational Forecast API (Port 8001):
-        uvicorn src.ai_agent_jobsearch_project.backend.wenblad_api:app --port 8001 --reload
+Market Insights API (Port 8000):
+uvicorn src.ai_agent_jobsearch_project.backend.rokka_api:app --port 8000 --reload
 
-2. Start the Frontend (Run in a third terminal)       
-        streamlit run src/ai_agent_jobsearch_project/frontend/main_app.py
+Occupational Forecast API (Port 8001):
+uvicorn src.ai_agent_jobsearch_project.backend.wenblad_api:app --port 8001 --reload
 
+### Step 3: Start the frontend
+streamlit run src/ai_agent_jobsearch_project/frontend/main_app.py
 
+---
+
+## Usage
+
+- Open the Streamlit interface in your browser
+- Ask questions about occupations, demand forecasts, and labor market trends
+- The system retrieves relevant documents using vector search and generates answers using the LLM
+
+---
