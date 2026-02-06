@@ -18,4 +18,4 @@ if __name__ == "__main__":
     print(hits[0] ["occupation_group"] ["label"])
 
 # to run, run as package
-# uv run python preprocessing/fetch_jobads.py
+# uv run python src/ai_agent_jobsearch_project/services/fetch_jobads.py
