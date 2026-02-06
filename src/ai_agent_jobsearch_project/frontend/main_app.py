@@ -14,6 +14,7 @@ API_WENBLAD = "http://127.0.0.1:8001"  # Yrkesbarometern
 
 
 # ===================== YRKESBAROMETERN =====================
+
 def show_yrkesbarometern():
     # Session State för din del
     if "areas" not in st.session_state:
@@ -23,8 +24,11 @@ def show_yrkesbarometern():
     if "api_usage" not in st.session_state:
         st.session_state.api_usage = 0
 
+        
+
     st.title("Yrkesbarometern")
     st.subheader("Hur ser framtiden ut för det valda yrket?")
+    st.text("Välj ett yrkesområde i sidomenyn eller använd snabbfrågorna.")
 
     # --- SIDEBAR-LOGIK ---
     with st.sidebar:
@@ -54,11 +58,15 @@ def show_yrkesbarometern():
 
     # --- SNABBSÖKNING & INPUT ---
     st.divider()
-    cols = st.columns(3)
+    st.subheader("Snabbsökning")
+    cols = st.columns(5)
     q_data = None
-    if cols[0].button("💻 Systemutvecklare"): q_data = ("Hur ser framtiden ut för systemutvecklare?", "Data/IT")
-    if cols[1].button("📈 Ekonomer"): q_data = ("Hur ser framtiden ut för ekonomer?", "Administration, ekonomi, juridik")
-    if cols[2].button("🩺 Sjuksköterskor"): q_data = ("Hur ser framtiden ut för sjuksköterskor?", "Hälso- och sjukvård")
+    if cols[0].button("💻 Hur ser framtiden ut för Systemutvecklare?"): q_data = ("Hur ser framtiden ut för systemutvecklare?", "Data/IT")
+    if cols[1].button("📈 Hur ser framtiden ut för Ekonomer?"): q_data = ("Hur ser framtiden ut för ekonomer?", "Administration, ekonomi, juridik")
+    if cols[2].button("🩺 Hur ser framtiden ut för Sjuksköterskor?"): q_data = ("Hur ser framtiden ut för sjuksköterskor?", "Hälso- och sjukvård")
+    if cols[3].button("⚒️ Hur ser framtiden ut för Snickare?"): q_data = ("Hur ser framtiden ut för snickare?", "Bygg och anläggning")
+
+    st.divider()
 
     user_input = st.chat_input("Fråga om ett yrke...")
     

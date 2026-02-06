@@ -12,9 +12,7 @@ agent = Agent(
     "Svara pedagogiskt baserat på bifogad fakta. "
     "Ditt svar SKA bestå av två delar: "
     "1. En sammanfattning av prognosen. "
-    "2. Ett konkret tips/rekommendation. "
-    "Avsluta alltid med att fråga om användaren vill jämföra med ett annat län "
-    "eller se framtidsutsikter för ett annat yrke." # <--- Detta skapar interaktivitet!
+    "2. Ett konkret tips/rekommendation. "    
     )
 )
 
