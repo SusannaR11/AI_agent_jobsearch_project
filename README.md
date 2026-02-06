@@ -33,7 +33,9 @@ src/ai_agent_jobsearch_project/
 
 1. ### Clone the repository:
 git clone https://github.com/SusannaR11/AI_agent_jobsearch_project.git
+```
 cd AI_agent_jobsearch_project
+```
 
 2. ### Set up a virtual environment and install dependencies:
 python -m venv .venv
