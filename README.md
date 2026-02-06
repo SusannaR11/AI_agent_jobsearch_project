@@ -1,38 +1,29 @@
-# AI Agent / RAG Project Using Arbetsförmedlingen Data
+# Labor Market Agent 🤖
 
-An intelligent search and analysis application using Retrieval-Augmented Generation (RAG) to help users navigate Swedish labor market forecasts from Arbetsförmedlingen.
+### An intelligent search and analysis application using RAG (Retrieval-Augmented Generation) to navigate Swedish labor market forecasts and real-time job data.
 
-Developed as part of the course  
-Advanced Object-Oriented Programming 2  
-at NBI / Handelsakademin
+Developed as part of the **Advanced Object-Oriented Programming 2** course at NBI/Handelsakademin.
 
-## Authors
-- Susanna Rokka  
-- Susanne Wenblad  
+**Authors:** Susanna Rokka & Susanne Wenblad
 
 ---
 
 ## Tech Stack
-
-- Backend: FastAPI  
-- Vector Database: LanceDB  
-- Frontend: Streamlit  
-- AI Models:
-  - LLM: Google Gemini 2.5 Flash (via Pydantic AI)
-- Embeddings: sentence-transformers/all-MiniLM-L6-v2  
-- Data Handling: Pandas and DuckDB for ranking and filtering  
-
----
+- **Backend:** FastAPI (Dual-instance architecture)
+- **Vector Database:** LanceDB (for RAG) & DuckDB (for structured data)
+- **Frontend:** Streamlit
+- **AI Models:** - **LLM:** Google Gemini 2.0 Flash (implemented via Pydantic AI)
+  - **Embeddings:** `sentence-transformers/all-MiniLM-L6-v2`
+- **Data Processing:** Pandas & DuckDB for efficient ranking, filtering, and analysis.
 
 ## Project Structure
+```text
 src/ai_agent_jobsearch_project/
-├── assets/ # Images and logos
-├── backend/ # FastAPI backends (rokka_api.py, wenblad_api.py)
-├── frontend/ # Streamlit app (main_app.py) and API client
-├── services/ # LLM agent, RAG logic and ingestion
-└── data/ # Local databases and JSON files
-
-
+├── assets/             # Logos and visual assets
+├── backend/            # FastAPI instances (rokka_api & wenblad_api), schemas, and settings
+├── frontend/           # Streamlit main application and API clients
+├── services/           # LLM Agent logic, RAG implementation, and data ingestion
+└── data/               # Local databases (DuckDB/LanceDB) and raw JSON sources
 
 ## Installation
 
