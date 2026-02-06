@@ -48,6 +48,6 @@ if __name__ == "__main__":
     print("Top 5:", job_count[:10])
 
 # to run script in command line:
-# uv run python -m preprocessing.process_jobads
+# uv run python src/ai_agent_jobsearch_project/services/process_jobads.py
 
 
