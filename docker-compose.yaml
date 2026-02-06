@@ -1,0 +1,24 @@
+# docker-compose.yml
+services:
+  backend:
+    build:
+      context: . 
+      dockerfile: src/ai_agent_jobsearch_project/backend/Dockerfile
+    ports:
+      - "8000:8000"
+      - "8000:8001"
+    env_file:
+      - ../../../.env
+
+
+  frontend:
+    build:
+      context: .
+      dockerfile: src/ai_agent_jobsearch_project/frontend/Dockerfile
+    ports:
+      - "8501:8501"
+    depends_on:
+      - backend
+    environment:
+      - API_URL=http://backend:8000
+      - API_URL=http://backend:8001

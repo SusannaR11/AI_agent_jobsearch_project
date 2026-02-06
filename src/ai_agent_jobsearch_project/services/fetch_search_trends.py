@@ -60,4 +60,5 @@ if __name__ == "__main__":
     main()
 
 # to run, run as package from root folder:
-# uv run python -m preprocessing.fetch_search_trends
+
+# uv run python src/ai_agent_jobsearch_project/services/fetch_search_trends.py

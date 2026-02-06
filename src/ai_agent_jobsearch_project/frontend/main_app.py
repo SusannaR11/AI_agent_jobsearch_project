@@ -118,7 +118,7 @@ def show_job_insights():
                 chart = alt.Chart(df).mark_bar(cornerRadius=6).encode(
                     x="count:Q", y=alt.Y("label:N", sort="-x"), tooltip=["label", "count"]
                 ).properties(height=420)
-                st.altair_chart(chart, use_container_width=True)
+                st.altair_chart(chart, width="stretch")
             else: st.info("Ingen sökdata.")
         except: st.error("Kunde inte nå kompisens API (8000)")
 
@@ -132,7 +132,7 @@ def show_job_insights():
                 chart = alt.Chart(df).mark_bar(cornerRadius=6).encode(
                     x="count:Q", y=alt.Y("label:N", sort="-x"), tooltip=["label", "count"]
                 ).properties(height=420)
-                st.altair_chart(chart, use_container_width=True)
+                st.altair_chart(chart, width="stretch")
             else: st.info("Ingen annonsdata.")
         except: st.error("Kunde inte nå kompisens API (8000)")
 
@@ -166,3 +166,6 @@ elif selected == "Yrkesbarometern":
     show_yrkesbarometern()
 else:
     show_home()
+
+# to run
+# uv run streamlit run src/ai_agent_jobsearch_project/frontend/main_app.py
